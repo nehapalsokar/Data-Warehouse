@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="npalsokaDW"
+  DTS:DTSID="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=smith-bi1.ischool.uw.edu;Initial Catalog=npalsokaDW;Provider=SQLOLEDB.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Class Lab Project-{55385934-D1DF-40C7-8402-294ACEE63DDF}smith-bi1.ischool.uw.edu.npalsokaDW;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

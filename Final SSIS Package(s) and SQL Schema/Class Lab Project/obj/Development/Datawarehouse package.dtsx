@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="2/8/2018 11:54:17 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="BLACKHAWK"
+  DTS:CreatorName="BlackHawk\Tanay"
+  DTS:DTSID="{7E7459C7-B381-4DE2-B53F-DF2B5F164F77}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Datawarehouse package"
+  DTS:PackageType="5"
+  DTS:VersionBuild="17"
+  DTS:VersionGUID="{F25033F4-757E-47EA-B853-FDC1A245118F}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Insert data into dimLocation"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{12F46D52-290C-4B1A-961E-56422A471CC3}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert data into dimLocation"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimLocation ON&#xA;INSERT INTO dbo.dimLocation&#xA;(&#xA;dimLocationKey,&#xA;Address&#xA;      ,City&#xA;      ,StateProvince&#xA;      ,Country&#xA;,PostalCode&#xA;)&#xA;VALUES&#xA;(&#xA;-1 -- I use -1 as an ID for my unknown members so I always know what they are&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,'Unknown'&#xA;);&#xA;-- Turn the identity insert to OFF so new rows auto assign identities&#xA;SET IDENTITY_INSERT dbo.dimLocation OFF;&#xA;GO&#xA;&#xA;&#xA;INSERT INTO dbo.dimLocation&#xA;(&#xA;Address&#xA;      ,City&#xA;      ,StateProvince&#xA;      ,Country&#xA;,PostalCode&#xA;)&#xA;Select &#xA;Address&#xA;      ,City&#xA;      ,StateProvince&#xA;      ,Country&#xA;,PostalCode&#xA;From StageReseller&#xA;UNION&#xA;Select &#xA;Address&#xA;      ,City&#xA;      ,StateProvince&#xA;      ,Country&#xA;,PostalCode&#xA;From StageCustomer&#xA;UNION&#xA;Select &#xA;Address&#xA;      ,City&#xA;      ,StateProvince&#xA;      ,Country&#xA;,PostalCode&#xA;From StageStore&#xA;&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into Channel"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{1373236A-35EA-4BF2-9C73-EFBA0514B86C}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into Channel"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimChannel ON;&#xA;&#xA;-- Load the row for Unknown member&#xA;INSERT INTO dbo.dimChannel&#xA;(&#xA;dimChannelKey -- include the surrogate key column in the list&#xA;,ChannelCategoryID&#xA;,ChannelCategoryName&#xA;,ChannelID&#xA;,ChannelName&#xA;)&#xA;VALUES&#xA;(&#xA;-1 -- I use -1 as an ID for my unknown members so I always know what they are&#xA;,0 -- because there is a hierarchy flattened into this dimension, you have to pass a key here, so make sure you use one that is not a real value&#xA;,'Unknown'&#xA;,0 -- same for this key&#xA;,'Unknown'&#xA;);&#xA;-- Turn the identity insert to OFF so new rows auto assign identities&#xA;SET IDENTITY_INSERT dbo.dimChannel OFF;&#xA;GO&#xA;&#xA;&#xA;&#xA;&#xA;INSERT INTO dbo.dimChannel&#xA;(&#xA;ChannelCategoryID&#xA;,ChannelCategoryName&#xA;,ChannelID&#xA;,ChannelName&#xA;)&#xA;select &#xA;a.ChannelCategoryID&#xA;,b.ChannelCategory as ChannelCategoryName&#xA;,a.ChannelID&#xA;,a.Channel as ChannelName&#xA;from&#xA;dbo.StageChannel a, dbo.StageChannelCategory b&#xA;where&#xA;a.ChannelCategoryID=b.ChannelCategoryID&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into Customer"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{CB1BBAFD-5C3B-4ADE-BB8B-E6126634F95F}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into Customer"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimCustomer ON &#xA;INSERT INTO dbo.dimCustomer&#xA;(&#xA;dimCustomerKey,&#xA;dimLocationKey,&#xA;CustomerID,&#xA;SubSegmentID,&#xA;FirstName,&#xA;LastName,&#xA;Gender,&#xA;EmailAddress,&#xA;PhoneNumber&#xA;)&#xA;VALUES&#xA;(&#xA;-1,&#xA;-1,&#xA;'00000000-0000-0000-0000-000000000000',&#xA;0,&#xA;'Unknown',&#xA;'Unknown',&#xA;'K',&#xA;'Unknown',&#xA;'Unknown'&#xA;)&#xA;SET IDENTITY_INSERT dbo.dimCustomer OFF&#xA;&#xA;INSERT INTO dbo.dimCustomer&#xA;(&#xA;dimLocationKey,&#xA;CustomerID,&#xA;SubSegmentID,&#xA;FirstName,&#xA;LastName,&#xA;Gender,&#xA;EmailAddress,&#xA;PhoneNumber&#xA;)&#xA;SELECT&#xA;l.dimLocationKey,&#xA;c.CustomerID,&#xA;c.SubSegmentID,&#xA;c.FirstName,&#xA;c.LastName,&#xA;c.Gender,&#xA;c.EmailAddress,&#xA;c.PhoneNumber&#xA;From dbo.StageCustomer c, dbo.dimLocation l&#xA;where&#xA;c.address = l.address and&#xA;c.city = l.city and&#xA;c. StateProvince=l. StateProvince and&#xA;c. Country=l. Country and&#xA;c. PostalCode=l. PostalCode&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into dimDate"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{343852B6-80C0-47A4-8AC6-31CECAEB2F33}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into dimDate"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="EXEC InsDimDateYearly 2013&#xA;EXEC InsDimDateYearly 2014" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into Product"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{AF4298F2-F5B5-4F74-BFB1-92F587B4E5B0}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into Product"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimProduct ON;&#xA;&#xA;-- Load the row for Unknown member&#xA;INSERT INTO dbo.dimProduct&#xA;(&#xA;dimProductKey,&#xA;ProductID,&#xA;ProductTypeID,&#xA;Product,&#xA;ProductCategoryID,&#xA;ProductCategory,&#xA;ProductType,&#xA;Color,&#xA;Style,&#xA;Weight,&#xA;Price,&#xA;Cost,&#xA;WholesalePrice&#xA;)&#xA;VALUES&#xA;(&#xA;-1 -- I use -1 as an ID for my unknown members so I always know what they are&#xA;,0 &#xA;,0&#xA;,'Unknown'&#xA;,0 -- same for this key&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,'Unknown'&#xA;,0&#xA;,0&#xA;,0&#xA;,0&#xA;);&#xA;-- Turn the identity insert to OFF so new rows auto assign identities&#xA;SET IDENTITY_INSERT dbo.dimProduct OFF;&#xA;GO&#xA;&#xA;&#xA;&#xA;INSERT INTO dbo.dimProduct&#xA;(&#xA;ProductID,&#xA;ProductTypeID,&#xA;Product,&#xA;ProductCategoryID,&#xA;ProductCategory,&#xA;ProductType,&#xA;Color,&#xA;Style,&#xA;Weight,&#xA;Price,&#xA;Cost,&#xA;WholesalePrice&#xA;)&#xA;&#xA;Select &#xA;a.ProductID,a.ProductTypeID,a.Product,b.ProductCategoryID,b.ProductCategory,c.ProductType, a.Color,a.Style,a.Weight,a.Price,a.Cost,a.WholesalePrice&#xA;From dbo.StageProduct a ,dbo.StageProductCategory b,dbo.StageProductType c&#xA;Where&#xA;c.producttypeid=a.producttypeid and&#xA;b.ProductCategoryID= c.ProductCategoryID&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into Reseller"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{CA119F45-7110-4834-B5C7-E3931CC09F0B}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into Reseller"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimReseller ON &#xA;INSERT INTO dbo.dimReseller&#xA;(&#xA;dimResellerKey,&#xA;dimLocationKey,&#xA;ResellerID,&#xA;ResellerName,&#xA;Contact,&#xA;EmailAddress,&#xA;PhoneNumber&#xA;)&#xA;VALUES&#xA;(&#xA;-1,&#xA;-1,&#xA;'00000000-0000-0000-0000-000000000000',&#xA;'Unknown',&#xA;'Unknown',&#xA;'Unknown',&#xA;'Unknown'&#xA;)&#xA;SET IDENTITY_INSERT dbo.dimReseller OFF&#xA;&#xA;&#xA;INSERT INTO dbo.dimReseller&#xA;(&#xA;dimLocationKey,&#xA;ResellerID,&#xA;ResellerName,&#xA;Contact,&#xA;EmailAddress,&#xA;PhoneNumber&#xA;)&#xA;Select&#xA;l.dimLocationKey,&#xA;r.ResellerID,&#xA;r.ResellerName,&#xA;r.Contact,&#xA;r.EmailAddress,&#xA;r.PhoneNumber&#xA;From dbo.StageReseller r, dbo.dimLocation l&#xA;where&#xA;r.address = l.address and&#xA;r.city = l.city and&#xA;r. StateProvince=l. StateProvince and&#xA;r. Country=l. Country and&#xA;r. PostalCode=l. PostalCode&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Insert into Store"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{A65144D2-61AE-4486-9FD2-E00BEC6AB5C9}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert into Store"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{55385934-D1DF-40C7-8402-294ACEE63DDF}"
+          SQLTask:SqlStatementSource="SET IDENTITY_INSERT dbo.dimStore ON &#xA;INSERT INTO dbo.dimStore&#xA;(&#xA;dimStoreKey,&#xA;dimLocationKey,&#xA;StoreID,&#xA;SubSegmentID,&#xA;StoreNumber,&#xA;StoreManager,&#xA;PhoneNumber&#xA;)&#xA;VALUES&#xA;(&#xA;-1,&#xA;-1,&#xA;0,&#xA;0,&#xA;0,&#xA;'Unknown',&#xA;'Unknown'&#xA;)&#xA;SET IDENTITY_INSERT dbo.dimStore OFF&#xA;&#xA;&#xA;INSERT INTO dbo.dimStore&#xA;(&#xA;dimLocationKey,&#xA;StoreID,&#xA;SubSegmentID,&#xA;StoreNumber,&#xA;StoreManager,&#xA;PhoneNumber&#xA;)&#xA;select &#xA;l.dimLocationKey,&#xA;s.StoreID,&#xA;s.SubSegmentID,&#xA;s.StoreNumber,&#xA;s.StoreManager,&#xA;s.PhoneNumber&#xA;from&#xA;dbo.StageStore s, dbo.dimLocation l&#xA;where&#xA;s.address = l.address and&#xA;s.city = l.city and&#xA;s. StateProvince=l. StateProvince and&#xA;s. Country=l. Country and&#xA;s. PostalCode=l. PostalCode&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{854C3E94-A03C-43FD-AE23-EFE0E65B108D}"
+      DTS:From="Package\Insert into dimDate"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Insert into Reseller" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{5226E558-EF65-4A40-A099-8D444E6DC8FD}"
+      DTS:From="Package\Insert into Reseller"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Insert into Customer" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{444C79D6-3574-411C-8F97-A7BA358C249B}"
+      DTS:From="Package\Insert data into dimLocation"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Insert into dimDate" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{8B2902A9-29F3-40CE-BFCC-A8C36B7BBB86}"
+      DTS:From="Package\Insert into Customer"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\Insert into Store" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{C86190DB-426D-41B1-AA8A-E769938924A6}"
+      DTS:From="Package\Insert into Store"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\Insert into Product" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{80DC1CFC-AF28-4C5E-BBEB-8DB053BABEEF}"
+      DTS:From="Package\Insert into Product"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\Insert into Channel" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="212,42"
+          Id="Package\Insert data into dimLocation"
+          TopLeft="5.5,5.5" />
+        <NodeLayout
+          Size="170.5,42"
+          Id="Package\Insert into dimDate"
+          TopLeft="26.25,107.5" />
+        <NodeLayout
+          Size="168,42"
+          Id="Package\Insert into Reseller"
+          TopLeft="27.5,209.5" />
+        <NodeLayout
+          Size="176,42"
+          Id="Package\Insert into Customer"
+          TopLeft="23.5,292.75" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="111.5,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="111.5,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,41.25"
+              Start="0,0"
+              End="0,33.75">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,33.75" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="111.5,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="156,42"
+          Id="Package\Insert into Store"
+          TopLeft="31.25,386.875" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\Insert into Product"
+          TopLeft="26.875,460" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="110.375,334.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,52.125"
+              Start="0,0"
+              End="0,44.625">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,44.625" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="109.8125,428.875">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,31.125"
+              Start="0,0"
+              End="0,23.625">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.625" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="169,42"
+          Id="Package\Insert into Channel"
+          TopLeft="23.125,536.875" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="109,502">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,34.875"
+              Start="0,0"
+              End="0,27.375">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,27.375" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
